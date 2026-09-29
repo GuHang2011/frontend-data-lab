@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="顾航的前端与数据分析学习示例：可复现的合成数据、SQLite 聚合与无依赖交互式仪表板。">
+  <title>Frontend × Data Lab · 顾航</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="data/summary.js"></script>
+  <script defer src="dashboard.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="layout">
+    <aside class="sidebar" aria-label="项目导航">
+      <a class="brand" href="https://github.com/GuHang2011"><span class="brand-mark" aria-hidden="true">G<span>H</span></span><span>GU HANG<small>ENGINEERING NOTEBOOK</small></span></a>
+      <div class="sidebar-title">FIELD NOTES / 001</div>
+      <nav><a class="active" href="#main"><span>01</span> 数据观察台</a><a href="../demos/form/index.html"><span>02</span> 交互表单示例 ↗</a><a href="#method"><span>03</span> 方法与边界</a><a href="https://github.com/GuHang2011/frontend-data-lab#notes"><span>04</span> 学习笔记 ↗</a><a href="https://github.com/GuHang2011/frontend-data-lab"><span>05</span> 查看源代码 ↗</a></nav>
+      <div class="sidebar-footer"><span class="signal" aria-hidden="true"></span> LOCAL FIRST<br><p>从数据契约到页面交互，<br>让每个数字都有出处。</p><span class="mono">PYTHON · SQL · JAVASCRIPT</span></div>
+    </aside>
+    <main id="main">
+      <header class="topbar"><span>FRONTEND <span class="cross">×</span> DATA LAB</span><a href="https://guhang2011.github.io/">个人主页 <span aria-hidden="true">↗</span></a></header>
+      <section class="hero" aria-labelledby="title">
+        <div><div class="eyebrow"><span class="signal" aria-hidden="true"></span> SYNTHETIC DATA · EDUCATIONAL DEMO</div><h1 id="title">From records<br>to <em>decisions.</em></h1><p class="lede">前端 × 数据分析观察台</p><p class="description">用一份可复现的合成订单数据，连接数据校验、SQL 聚合与交互式可视化。选择范围，观察指标如何变化。</p></div>
+        <div class="hero-note"><span class="note-number">001</span><span class="note-label">A SMALL, COMPLETE<br>DATA WORKFLOW</span><div class="mini-pipeline" aria-label="处理流程">CSV <span>→</span> SQLite <span>→</span> JSON <span>→</span> UI</div><p>此页面为新建学习作品；<br>所有数字均来自合成数据，<br>不代表真实业务或研究结论。</p></div>
+      </section>
+      <noscript><p class="error-panel">请启用 JavaScript 使用筛选。也可直接查看 <a href="data/summary.json">公开聚合数据</a>。</p></noscript>
+      <div id="error" class="error-panel" role="alert" hidden></div>
+      <section class="workspace" aria-labelledby="explore-title">
+        <div class="section-heading"><h2 id="explore-title">Explore the dataset <span>数据探索</span></h2><span id="dataset-meta" class="mono">加载数据中…</span></div>
+        <form id="filters" class="filters" aria-label="数据筛选">
+          <div><label for="region">区域 REGION</label><select id="region" name="region"><option value="all">全部区域</option><option value="east">华东（模拟）</option><option value="central">华中（模拟）</option><option value="west">西部（模拟）</option></select></div>
+          <div><label for="channel">渠道 CHANNEL</label><select id="channel" name="channel"><option value="all">全部渠道</option><option value="web">Web</option><option value="app">App</option></select></div>
+          <div><label for="from">开始日期 FROM</label><input type="date" id="from" name="from" required></div>
+          <div><label for="to">结束日期 TO</label><input type="date" id="to" name="to" required></div>
+          <button type="reset" class="reset">重置筛选 <span aria-hidden="true">↺</span></button>
+        </form>
+        <p id="filter-error" class="filter-error" role="alert" hidden></p>
+        <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+        <div class="metrics" aria-label="选定范围内的关键指标">
+          <article><div class="metric-label">完成订单 <span>01</span></div><strong id="metric-orders">—</strong><small>状态为 completed 的订单数</small></article>
+          <article><div class="metric-label">完成订单金额 <span>02</span></div><strong id="metric-revenue">—</strong><small>仅统计完成订单 · CNY</small></article>
+          <article><div class="metric-label">平均订单金额 <span>03</span></div><strong id="metric-aov">—</strong><small>完成订单金额 ÷ 完成订单数</small></article>
+          <article><div class="metric-label">退款订单占比 <span>04</span></div><strong id="metric-refunds">—</strong><small>退款订单数 ÷ 全部状态订单数</small></article>
+        </div>
+        <div class="charts">
+          <article class="chart-card"><div class="card-heading"><div><span class="eyebrow">DAILY DISTRIBUTION</span><h3>每日完成订单金额</h3></div><span class="chart-key"><i aria-hidden="true"></i> CNY / 日</span></div><div id="chart" class="chart"></div><p class="chart-caption">缺失日期补零；金额按订单日期统计。下方数据表提供对应数值。</p></article>
+          <article class="chart-card regions-card"><div class="card-heading"><div><span class="eyebrow">REGIONAL COMPOSITION</span><h3>区域金额构成</h3></div></div><div id="regions" class="region-bars"></div><div class="chart-note"><span aria-hidden="true">↳</span><p>区域比例来自当前筛选范围。样本由预设概率生成，不适合推断真实市场差异。</p></div></article>
+        </div>
+        <article class="table-card"><div class="card-heading"><div><span class="eyebrow">TRACEABLE NUMBERS</span><h3>每日聚合明细</h3></div><button id="download" class="download" type="button">下载当前筛选 CSV <span aria-hidden="true">↓</span></button></div><div class="table-scroll"><table><caption class="sr-only">当前筛选结果的每日指标，默认显示最近十四天</caption><thead><tr><th scope="col">日期</th><th scope="col">全部订单</th><th scope="col">完成订单</th><th scope="col">完成金额（元）</th><th scope="col">退款订单</th></tr></thead><tbody id="table-body"></tbody></table></div><div class="table-footer"><span id="table-note"></span><button id="toggle-rows" type="button">显示全部日期</button></div></article>
+      </section>
+      <section class="method" id="method" aria-labelledby="method-title"><div><div class="eyebrow">METHOD & LIMITATIONS</div><h2 id="method-title">数字背后，<br>有可检查的过程。</h2><a href="https://github.com/GuHang2011/frontend-data-lab#data-pipeline">阅读数据管线与指标定义 ↗</a></div><div class="method-items"><article><span>01 / REPRODUCIBLE</span><h3>固定种子，完整路径</h3><p>默认种子 42，12,000 条合成订单，覆盖 84 天。原始 CSV 在本地生成，公开页面仅包含按日期、区域和渠道汇总的数据。</p></article><article><span>02 / EXPLICIT CONTRACT</span><h3>整数金额，明确分母</h3><p>用整数分存储金额；退款与取消订单不进入完成金额。筛选后重新计算平均值与占比，避免“平均值的平均值”。</p></article><article><span>03 / HONEST SCOPE</span><h3>教学规模，非生产评测</h3><p>本例在单机 SQLite 上运行。仓库另附可选 PySpark 扩展示例；尚未进行 Spark 集群运行或性能评估。</p></article></div></section>
+      <footer class="footer"><span>GU HANG · FRONTEND × DATA LAB</span><a href="data/summary.json">JSON 数据 ↗</a><a href="https://github.com/GuHang2011/frontend-data-lab">Source on GitHub ↗</a></footer>
+    </main>
+  </div>
+</body>
+</html>

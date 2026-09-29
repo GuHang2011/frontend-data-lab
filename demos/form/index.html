@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="一个可离线打开的研究项目登记表单教学示例，展示分步校验、条件字段和本地草稿。">
+  <title>研究项目登记 · Frontend & Data Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="form-core.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">跳到表单</a>
+  <header class="topbar"><a href="../../index.html" class="brand">F<span>&</span>D LAB <span class="back">/ 返回实验室</span></a><span class="edition">INTERACTION STUDY · 01</span></header>
+  <main class="layout">
+    <aside class="intro">
+      <p class="eyebrow"><span class="dot"></span> 一个想法的起点</p>
+      <h1>把研究想法，<br>写得更清楚。</h1>
+      <p class="lead">从一个问题开始，整理数据与产出。<br>三步完成一份简短的项目登记。</p>
+      <ol class="steps" aria-label="登记进度">
+        <li data-step="basics"><span class="step-number">01</span><div><strong>定义项目</strong><span>给想法一个名字</span></div></li>
+        <li data-step="plan"><span class="step-number">02</span><div><strong>规划研究</strong><span>问题、数据与产出</span></div></li>
+        <li data-step="review"><span class="step-number">03</span><div><strong>确认内容</strong><span>最后再看一遍</span></div></li>
+      </ol>
+      <div class="local-note"><span class="note-mark" aria-hidden="true">↳</span><p><strong>只在你的浏览器里。</strong><br>这是交互教学示例，不会提交到服务器。<br>无需填写姓名或联系方式。</p></div>
+      <p class="side-footer">SMALL STEPS. CLEARER IDEAS.</p>
+    </aside>
+    <section id="workspace" class="workspace" aria-label="项目登记表单">
+      <div class="panel-top"><span id="step-label">STEP 01 / 03</span><span id="progress-label">开始整理</span></div>
+      <div class="progress-track" role="progressbar" aria-label="登记进度" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><div id="progress-fill"></div></div>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <form id="project-form" novalidate>
+        <div class="section-heading"><p class="eyebrow" id="section-kicker">THE IDEA</p><h2 id="section-title" tabindex="-1">定义你的项目</h2><p id="section-description">不必面面俱到。先说清楚你想研究什么。</p></div>
+        <div id="error-summary" class="error-summary" role="alert" tabindex="-1" hidden></div>
+        <div id="fields"></div>
+        <div id="review" hidden></div>
+        <div id="complete" hidden><div class="complete-mark" aria-hidden="true">✓</div><p class="complete-copy">想法已经整理好了。你可以导出这份登记，<br>作为下一次讨论的起点。</p><p class="complete-note">本地演示已完成，没有向服务器发送内容。</p></div>
+        <div class="actions"><button id="back-button" type="button" class="button secondary" hidden>← 上一步</button><button id="export-button" type="button" class="button secondary" hidden>导出登记 ↓</button><button id="next-button" type="submit" class="button primary">继续规划 <span aria-hidden="true">↗</span></button></div>
+      </form>
+      <footer class="panel-footer"><span id="save-status" role="status">草稿将自动保存在本机</span><button id="clear-button" class="text-button" type="button">清除草稿</button></footer>
+    </section>
+  </main>
+  <footer class="page-footer"><span>FRONTEND & DATA LAB</span><span>多步骤表单 · 条件字段 · 本地草稿</span><a href="README.md">查看示例说明 ↗</a></footer>
+  <dialog id="clear-dialog" aria-labelledby="clear-title"><h2 id="clear-title">重新开始？</h2><p>这会清除当前填写内容和本机草稿。</p><div class="dialog-actions"><button type="button" id="cancel-clear" class="button secondary">继续填写</button><button type="button" id="confirm-clear" class="button primary">清除并重填</button></div></dialog>
+  <noscript><p class="noscript">请开启 JavaScript 体验分步填写。此示例不连接任何服务器。</p></noscript>
+</body>
+</html>

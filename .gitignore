@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+data/*.csv
+data/*.sqlite*
+data/spark-output*/
+.DS_Store
