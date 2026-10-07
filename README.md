@@ -3,9 +3,11 @@
 **A reproducible learning project connecting frontend interfaces, SQL analytics, and data quality.**  
 从数据记录到交互界面：顾航的前端与数据分析学习作品。
 
-[打开演示页面](https://guhang2011.github.io/frontend-data-lab/) · [数据字典](docs/data-dictionary.md) · [学习笔记](#notes) · [GitHub](https://github.com/GuHang2011)
+[打开演示页面](https://guhang2011.github.io/frontend-data-lab/) · [审阅入口](REVIEWER_ENTRY.md) · [数据字典](docs/data-dictionary.md) · [学习笔记](docs/README.md) · [代码示例](examples/README.md)
 
 > 使用固定种子的合成订单数据，展示可复现数据处理与前端交互设计的教学项目。
+
+本仓库同时收录数据标注质量检查、公开网页采集、模型基础与笔试复习材料。它们是学习练习；模型笔记不代表已经完成模型训练或取得科研结果。
 
 ## Start here
 
@@ -18,9 +20,12 @@ python -m src.pipeline
 python -m unittest discover -s tests -p "test_*.py" -v
 node --test tests/dashboard.test.cjs
 node --test demos/form/form-core.test.cjs
+python examples/data-labeling/label_quality.py
 ```
 
 Node.js 18+ 仅用于运行前端逻辑测试，页面本身不依赖 Node。也可在根目录运行 `python -m http.server 8000`，浏览 `http://localhost:8000/site/`。关闭服务用 Ctrl+C。
+
+这些命令均在仓库根目录运行。2026-10-08 发布前验证环境为 Python 3.8.6、Node.js 25.2.1；Python 示例仅用标准库。爬虫测试使用模拟响应，无需网络访问。
 
 ## Frontend
 
@@ -73,7 +78,7 @@ spark-submit examples/spark_aggregate.py --input data/orders.csv --output data/s
 
 ## Notes
 
-围绕本仓库代码组织的配套学习笔记，每篇附官方文档链接，便于继续实践。
+围绕本仓库代码组织的配套学习笔记。完整阅读路线见 [笔记总览](docs/README.md) 与 [模型知识地图](docs/modeling-reading-map.md)。
 
 | 主题 | 阅读内容 |
 |---|---|
@@ -83,6 +88,24 @@ spark-submit examples/spark_aggregate.py --input data/orders.csv --output data/s
 | [04 · SQL 与窗口函数](docs/04-sql-window.md) | 聚合粒度、加权指标、完整日期轴与滚动窗口 |
 | [05 · Spark / Hadoop 分区与倾斜](docs/05-partitions-skew.md) | 输入分区、Shuffle、输出分区、小文件与热点键 |
 | [06 · 数据质量与可复现性](docs/06-data-quality-reproducibility.md) | 约束、事务、种子、环境记录与诚实评估 |
+| [07 · 辅导员工作流](docs/07-counselor-workflow.md) | 从业务状态、权限边界到研究问题 |
+| [08 · 前端性能实践](docs/08-frontend-performance.md) | 数据表、交互反馈与性能测量 |
+| [09 · 建模基础](docs/09-modeling-basics.md) | 任务定义、基线、时间与分组切分 |
+| [10 · 特征工程](docs/10-feature-engineering.md) | 编码、历史窗口与数据泄漏 |
+| [11 · 评估与误差分析](docs/11-evaluation-error-analysis.md) | 指标选择、分层评估与失败案例 |
+| [12 · 模型笔试与面试](docs/12-model-interview-notes.md) | 正则化、树模型、过拟合与阈值 |
+
+## Applied examples
+
+| 练习 | 可运行内容 | 证据与限制 |
+| --- | --- | --- |
+| [数据标注质量](examples/data-labeling/) | 读取 5 条合成请求，检查双人一致率、覆盖率和复核队列 | 缺失标注单列，未知标签报错；样本不是标注质量实验 |
+| [公开网页采集](examples/public-crawler/) | robots 检查、同源限制、限速、请求预算与 JSONL 输出 | 拒绝自动重定向；已做离线边界测试，未做真实站点联网测试 |
+| [表单状态机](demos/form/) | [在线表单](https://guhang2011.github.io/frontend-data-lab/demos/form/)：多步校验、草稿恢复和条件字段 | 使用本地演示状态，不提交真实申请 |
+
+相关工程案例：[辅导员工作流在线展示](https://guhang2011.github.io/counselor-workflow-showcase/) · [案例代码](https://github.com/GuHang2011/counselor-workflow-showcase)。
+
+从 [实验卡片模板](docs/experiment-card-template.md) 开始记录问题、数据版本、方法、指标和局限性。模板本身不是实验结果。
 
 ## Repository map
 
@@ -93,15 +116,19 @@ site/dashboard.js          筛选、聚合、可视化与导出
 site/data/summary.json     可检查的公开合成聚合数据
 site/data/summary.js       同一份数据的离线脚本封装
 examples/spark_aggregate.py 可选的 PySpark 练习
+examples/data-labeling/    合成文本标签、完整性与一致率检查
+examples/public-crawler/   有请求边界的公开页面元数据采集
 demos/form/               多步骤表单、草稿恢复与状态机练习
-docs/                     数据字典与六篇学习笔记
-tests/                    管线和前端逻辑验证
+docs/                     数据字典、12 篇学习笔记与模型阅读路线
+tests/                    管线、标注、爬虫与前端逻辑验证
 data/                     本地生成 CSV / SQLite（不提交）
 ```
 
 ## Validation and limits
 
 Python 测试覆盖分块大小不变性、种子复现、整数金额与状态指标、非法输入、重复 ID 的事务回滚、空输入和 JSON/离线快照一致性。Node 测试覆盖筛选组合、加权分母、零分母、缺失日期、单日范围、CSV 和已提交数据契约。
+
+新增离线测试覆盖缺失标注的分母、未知标签、重复任务 ID、robots 拒绝与不可用、重定向阻断、同源检查、去重、请求预算、非 HTML/失败请求限速、响应体积和非法参数。测试结果与尚未执行的 Spark、真实站点联网验证分别说明，避免把代码存在当作实验完成。
 
 已在浏览器检查桌面页面、组合筛选、反向日期错误与重置恢复。读屏器实测、生产并发和分布式吞吐量不属于已完成验证。
 
